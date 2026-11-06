@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#fff7f6">
+    <meta name="description" content="Find out your love match with this playful love calculator.">
+    <title>Love Match — Love Calculator</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #38252f;
+            --muted: #8e7580;
+            --pink: #e94f78;
+            --pink-dark: #d93867;
+            --cream: #fffaf7;
+            --line: #f0dfe4;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-width: 320px;
+            min-height: 100vh;
+            margin: 0;
+            display: grid;
+            place-items: center;
+            padding: 32px 18px;
+            overflow-x: hidden;
+            color: var(--ink);
+            background:
+                radial-gradient(ellipse at 12% 18%, #ffe1e8 0, transparent 30%),
+                radial-gradient(ellipse at 90% 82%, #ffe9dc 0, transparent 32%),
+                var(--cream);
+            font-family: "Segoe UI", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        .decoration {
+            position: fixed;
+            z-index: -1;
+            color: #f4cbd5;
+            user-select: none;
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .heart-one { top: 13%; left: 12%; font-size: 34px; }
+        .heart-two { right: 12%; bottom: 15%; font-size: 26px; animation-delay: -2s; }
+        .heart-three { top: 19%; right: 18%; font-size: 18px; animation-delay: -1s; }
+
+        .card {
+            width: min(100%, 490px);
+            padding: 42px 44px 30px;
+            border: 1px solid rgba(255, 255, 255, .9);
+            border-radius: 30px;
+            background: rgba(255, 255, 255, .88);
+            box-shadow: 0 24px 70px rgba(111, 53, 74, .12), 0 3px 12px rgba(111, 53, 74, .04);
+            text-align: center;
+            backdrop-filter: blur(12px);
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            color: var(--pink-dark);
+            font-size: 12px;
+            font-weight: 750;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+        }
+
+        .brand-heart { font-size: 17px; }
+
+        h1 {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(36px, 8vw, 48px);
+            font-weight: 500;
+            letter-spacing: -.045em;
+            line-height: 1.12;
+        }
+
+        h1 span { color: var(--pink); font-style: italic; }
+
+        .intro {
+            max-width: 320px;
+            margin: 14px auto 28px;
+            color: var(--muted);
+            font-size: 15px;
+            line-height: 1.65;
+        }
+
+        form { text-align: left; }
+
+        .field { margin-bottom: 17px; }
+
+        label {
+            display: block;
+            margin: 0 0 8px 2px;
+            color: #634c57;
+            font-size: 13px;
+            font-weight: 650;
+        }
+
+        input {
+            width: 100%;
+            height: 54px;
+            padding: 0 16px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            outline: none;
+            background: #fffdfc;
+            color: var(--ink);
+            font: inherit;
+            font-size: 15px;
+            transition: border-color .2s, box-shadow .2s, background .2s;
+        }
+
+        input::placeholder { color: #b9a8af; }
+        input:hover { border-color: #e9bdca; }
+        input:focus { border-color: var(--pink); box-shadow: 0 0 0 4px rgba(233, 79, 120, .12); background: white; }
+
+        .match-icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            margin: -1px auto 5px;
+            border: 1px solid #f5dce3;
+            border-radius: 50%;
+            background: #fff5f7;
+            color: var(--pink);
+            font-size: 19px;
+        }
+
+        button {
+            width: 100%;
+            min-height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            margin-top: 23px;
+            border: 0;
+            border-radius: 15px;
+            background: linear-gradient(110deg, #ed6688, #df4772);
+            box-shadow: 0 9px 20px rgba(224, 67, 109, .22);
+            color: white;
+            cursor: pointer;
+            font: inherit;
+            font-size: 15px;
+            font-weight: 700;
+            transition: transform .18s, box-shadow .18s, filter .18s;
+        }
+
+        button:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(224, 67, 109, .28); filter: saturate(1.08); }
+        button:active { transform: translateY(0); }
+        button:focus-visible { outline: 3px solid #f2a6b9; outline-offset: 3px; }
+
+        .result {
+            margin-top: 25px;
+            padding: 22px 18px 19px;
+            border: 1px solid #f7dce4;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #fff7f8, #fffaf7);
+            animation: reveal .45s ease both;
+        }
+
+        .result[hidden] { display: none; }
+        .result-label { margin: 0; color: var(--muted); font-size: 13px; font-weight: 600; }
+        .score { margin: 2px 0 0; color: var(--pink-dark); font-size: 54px; font-weight: 750; letter-spacing: -.06em; line-height: 1.2; }
+        .result-message { margin: 5px 0 0; color: #634c57; font-size: 14px; line-height: 1.5; }
+        .names { margin: 12px 0 0; color: #a28792; font-size: 12px; }
+
+        .note {
+            margin: 22px 0 0;
+            color: #a38e97;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+
+        @keyframes float { 50% { transform: translateY(-10px) rotate(7deg); } }
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(8px) scale(.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @media (max-width: 520px) {
+            .card { padding: 34px 25px 25px; border-radius: 25px; }
+            .intro { margin-bottom: 24px; }
+            .heart-one { left: 4%; top: 8%; }
+            .heart-two { right: 5%; bottom: 7%; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+        }
+    </style>
+</head>
+<body>
+    <span class="decoration heart-one" aria-hidden="true">♥</span>
+    <span class="decoration heart-two" aria-hidden="true">♥</span>
+    <span class="decoration heart-three" aria-hidden="true">♥</span>
+
+    <main class="card">
+        <div class="brand"><span class="brand-heart" aria-hidden="true">♥</span> Love Match</div>
+        <h1>Is it <span>love?</span></h1>
+        <p class="intro">Two names, one little spark. Find out what the universe thinks of your match.</p>
+
+        <form id="love-form">
+            <div class="field">
+                <label for="your-name">Your name</label>
+                <input id="your-name" name="yourName" type="text" placeholder="e.g. Alex" autocomplete="given-name" maxlength="60" required>
+            </div>
+            <div class="match-icon" aria-hidden="true">♥</div>
+            <div class="field">
+                <label for="crush-name">Your crush's name</label>
+                <input id="crush-name" name="crushName" type="text" placeholder="e.g. Jamie" maxlength="60" required>
+            </div>
+            <button type="submit"><span aria-hidden="true">✦</span> Calculate our love</button>
+        </form>
+
+        <section class="result" id="result" aria-live="polite" aria-atomic="true" hidden>
+            <p class="result-label">Your love score</p>
+            <p class="score" id="score">0%</p>
+            <p class="result-message" id="result-message"></p>
+            <p class="names" id="result-names"></p>
+        </section>
+
+        <p class="note">Just for fun — the best connections are made one moment at a time.</p>
+    </main>
+
+    <script>
+        const form = document.querySelector("#love-form");
+        const result = document.querySelector("#result");
+        const scoreOutput = document.querySelector("#score");
+        const messageOutput = document.querySelector("#result-message");
+        const namesOutput = document.querySelector("#result-names");
+
+        const messages = [
+            [25, "A little spark is a lovely place to start."],
+            [45, "There could be a sweet connection here."],
+            [65, "The chemistry is looking pretty promising!"],
+            [85, "A match made for memorable moments!"],
+            [101, "Wow, that's a whole lot of heart!"]
+        ];
+
+        function getLoveScore(firstName, secondName) {
+            const pair = [firstName.trim().toLocaleLowerCase(), secondName.trim().toLocaleLowerCase()]
+                .sort()
+                .join("|");
+            let hash = 0;
+
+            for (let index = 0; index < pair.length; index += 1) {
+                hash = (hash * 31 + pair.charCodeAt(index)) >>> 0;
+            }
+
+            return 50 + (hash % 51);
+        }
+
+        form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            if (!form.reportValidity()) return;
+
+            const yourName = form.elements.yourName.value.trim();
+            const crushName = form.elements.crushName.value.trim();
+            if (!yourName || !crushName) return;
+
+            const score = getLoveScore(yourName, crushName);
+            scoreOutput.textContent = `${score}%`;
+            messageOutput.textContent = messages.find(([threshold]) => score < threshold)[1];
+            namesOutput.textContent = `${yourName} + ${crushName}`;
+            result.hidden = false;
+        });
+    </script>
+</body>
+</html>
